@@ -15,8 +15,6 @@ import java.util.concurrent.Executors;
 /**
  * @author davis t.
  * Simple Java server program, using built-in libraries.
- * (except `org.json.JSONObject`)
- * returns 200 OK JSON response with any REQUEST method.
  */
 public class App {
 
@@ -35,6 +33,10 @@ public class App {
 
     }
 
+    /**
+     * handles the Request. Returns 200 OK response regardless oF
+     * request method
+     */
     public static class doHandle implements HttpHandler {
 
         @Override

@@ -1,0 +1,7 @@
+{
+    "java.saveActions.organizeImports": true,
+    "debug.terminal.clearBeforeReusing": true,
+    "editor.codeActionsOnSave": {
+     "source.organizeImports": true
+    }
+}

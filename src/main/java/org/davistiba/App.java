@@ -14,7 +14,8 @@ import java.util.concurrent.Executors;
 
 /**
  * @author davis t.
- * Simple Java server program, using built-in libraries.
+ * Simple Java server, using built-in libraries.
+ * Listens on localhost, port 9999
  */
 public class App {
 
@@ -34,8 +35,8 @@ public class App {
     }
 
     /**
-     * handles the Request. Returns 200 OK response regardless oF
-     * request method
+     * handles the Request. Returns 200 OK JSON response
+     * regardless oF request METHOD
      */
     public static class doHandle implements HttpHandler {
 
@@ -48,7 +49,7 @@ public class App {
 
             try (BufferedInputStream br = new BufferedInputStream(in)) {
 
-                //read the request
+                //read the request body
                 while (br.read() != -1) {
                     //FIXME: always skips first character
                     System.out.println(new String(br.readAllBytes()));

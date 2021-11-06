@@ -50,17 +50,17 @@ public class App {
 
             try (BufferedInputStream br = new BufferedInputStream(in)) {
 
+                //read client message
                 while (br.available() != 0) {
                     System.out.print((char) br.read());
                 }
 
                 System.out.println(); //skip a line.
 
-                final String baba = "<html> \n" +
-                        String.format("<h1>hello, the local time is %s</h1> %n",
-                                LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)) +
-                        "</html>";
-
+                //return simple HTML page
+                final String baba = String.format("<h1>hello, the local time is %s</h1> %n",
+                                LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+                     
                 BufferedOutputStream bout = new BufferedOutputStream(out);
 
                 headers.set("Content-Type", "text/html");

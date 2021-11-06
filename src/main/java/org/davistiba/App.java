@@ -4,11 +4,11 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-import org.json.JSONObject;
 
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -21,7 +21,7 @@ public class App {
 
     static HttpServer server;
 
-    static ExecutorService executor = Executors.newFixedThreadPool(2);
+    static ExecutorService executor = Executors.newFixedThreadPool(4);
 
     public static void main(String[] args) throws IOException {
 
@@ -35,7 +35,7 @@ public class App {
     }
 
     /**
-     * handles the Request. Returns 200 OK JSON response
+     * handles the Request. Returns 200 OK response
      * regardless oF request METHOD
      */
     public static class doHandle implements HttpHandler {
@@ -47,24 +47,25 @@ public class App {
             OutputStream out = exchange.getResponseBody();
             Headers headers = exchange.getResponseHeaders();
 
+
             try (BufferedInputStream br = new BufferedInputStream(in)) {
 
-                //read the request body
-                while (br.read() != -1) {
-                    //FIXME: always skips first character
-                    System.out.println(new String(br.readAllBytes()));
+                while (br.available() != 0) {
+                    System.out.print((char) br.read());
                 }
 
-                //send back response
-                final JSONObject baba = new JSONObject();
-                baba.put("message", "hello");
-                baba.put("datetime", LocalDateTime.now());
+                System.out.println(); //skip a line.
+
+                final String baba = "<html> \n" +
+                        String.format("<h1>hello, the local time is %s</h1> %n",
+                                LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)) +
+                        "</html>";
 
                 BufferedOutputStream bout = new BufferedOutputStream(out);
 
-                headers.set("Content-Type", "application/json");
-                exchange.sendResponseHeaders(200, baba.toString().length());
-                bout.write(baba.toString().getBytes());
+                headers.set("Content-Type", "text/html");
+                exchange.sendResponseHeaders(200, baba.length());
+                bout.write(baba.getBytes());
                 bout.close();
             }
         }

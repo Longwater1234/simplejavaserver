@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello Java Simple</title>
+    <style>
+        body {
+            font-family: sans-serif;
+        }
+
+        #quotes {
+            text-align: center;
+            color: green;
+            border: rgba(0, 0, 0, 0.5) 1px solid;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+<h1>Hi There!</h1>
+<p>Wanna see a magic trick?</p>
+<div id="quotes"></div>
+<div>
+    <button onClick="showQuote()">Click me</button>
+</div>
+
+<script>
+    function showQuote() {
+        fetch("/quotes", {
+            method: "GET"
+        })
+		.then(response => response.text())
+		.then(data => {
+            document.getElementById("quotes").innerHTML = data;
+        }).catch(error => alert(error))
+    }
+</script>
+</body>
+</html>

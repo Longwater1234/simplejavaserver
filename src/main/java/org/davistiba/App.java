@@ -7,27 +7,29 @@ import com.sun.net.httpserver.HttpServer;
 
 import java.io.*;
 import java.net.InetSocketAddress;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
  * @author davis t.
- * Simple Java server, using built-in libraries.
+ * Simple Java server, using built-in libraries only.
  * Listens on localhost, port 9999
  */
 public class App {
 
     static HttpServer server;
 
-    static ExecutorService executor = Executors.newFixedThreadPool(4);
+    static final ExecutorService executor = Executors.newFixedThreadPool(2);
 
     public static void main(String[] args) throws IOException {
 
         server = HttpServer.create(new InetSocketAddress(9999), 0);
 
         server.createContext("/", new doHandle());
+        server.createContext("/quotes", new MagicQuoteHandler());
         server.setExecutor(executor);
         System.out.println("Listening on port " + server.getAddress());
         server.start();
@@ -35,8 +37,8 @@ public class App {
     }
 
     /**
-     * handles the Request. Returns 200 OK response
-     * regardless oF request METHOD
+     * handles the Request. Returns an HTML page
+     * regardless of request METHOD
      */
     public static class doHandle implements HttpHandler {
 
@@ -55,18 +57,15 @@ public class App {
                     System.out.print((char) br.read());
                 }
 
-                System.out.println(); //skip a line.
+                System.out.println(); //skip line
 
-                //return simple HTML page
-                final String baba = String.format("<h1>hello, the local time is %s</h1> %n",
-                                LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-                     
-                BufferedOutputStream bout = new BufferedOutputStream(out);
+                //send back HTML page
+                String sb = new String(Files.readAllBytes(Paths.get("mama.html")), StandardCharsets.UTF_8);
 
                 headers.set("Content-Type", "text/html");
-                exchange.sendResponseHeaders(200, baba.length());
-                bout.write(baba.getBytes());
-                bout.close();
+                exchange.sendResponseHeaders(200, sb.length());
+                out.write(sb.getBytes(StandardCharsets.UTF_8));
+                out.close();
             }
         }
     }
